@@ -1,83 +1,99 @@
-import axios from "axios";
+import axios from 'axios';
 
-const userList = document.querySelector("#user-list");
-const restaurantList = document.querySelector("#rest-list");
-const reservationList = document.querySelector("#reserv-list");
+const userList = document.querySelector('#user-list');
+const restaurantList = document.querySelector('#rest-list');
+const reservationList = document.querySelector('#reserv-list');
 
 let userId;
 
 const renderUsers = async () => {
-    try {
-        const users = (await axios.get("/api/users")).data;
+  try {
+    const users = (await axios.get('/api/users')).data;
 
-        const html = `
+    const html = `
             ${users
-                .map(
-                    (user) => `
+              .map(
+                (user) => `
             <li> 
                 <a href="#${user.id}">
                     ${user.name}
                 </a>
             </li>
-            `,
-                )
-                .join("")}
+            `
+              )
+              .join('')}
         `;
-        userList.innerHTML = html;
-    } catch (err) {
-        console.log(err);
-    }
+    userList.innerHTML = html;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const renderRestaurants = async () => {
-    try {
-        const restaurants = (await axios.get("/api/restaurants")).data;
+  try {
+    const restaurants = (await axios.get('/api/restaurants')).data;
 
-        const html = `
+    const html = `
             ${restaurants
-                .map(
-                    (restaurant) => `
+              .map(
+                (restaurant) => `
             <li> 
                     ${restaurant.name}
             </li>
-            `,
-                )
-                .join("")}
+            `
+              )
+              .join('')}
         `;
-        restaurantList.innerHTML = html;
-    } catch (err) {
-        console.log(err);
-    }
+    restaurantList.innerHTML = html;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const renderReservations = async (reservations) => {
-    try {
-        const html = `
+  try {
+    const html = `
         ${reservations
-            .map(
-                (reservation) => `
+          .map(
+            (reservation) => `
         <li> 
                 ${reservation.restaurant.name} @ ${reservation.createdAt}
         </li>
-        `,
-            )
-            .join("")}
+        `
+          )
+          .join('')}
     `;
-        reservationList.innerHTML = html;
-    } catch (err) {
-        console.log(err);
-    }
+    reservationList.innerHTML = html;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-window.addEventListener("hashchange", async () => {
-    try {
-        const userId = window.location.hash.slice(1);
-        const URL = `/api/users/${userId}/reservations`;
-        const reservations = (await axios(URL)).data;
-        renderReservations(reservations);
-    } catch (err) {
-        console.log(err);
-    }
+window.addEventListener('hashchange', async () => {
+  try {
+    const userId = window.location.hash.slice(1);
+    const URL = `/api/users/${userId}/reservations`;
+    const reservations = (await axios(URL)).data;
+    renderReservations(reservations);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+restaurantList.addEventListener('click', async (ev) => {
+  const target = ev.target;
+  const userId = window.location.hash.slice(1);
+  let restaurantObj;
+
+  if (target.tagName === 'LI') {
+    const restaurants = (await axios.get('/api/restaurants')).data;
+    restaurants.forEach((elem) => {
+      if (elem[name] === target.innerHTML) {
+        restaurantObj = elem;
+      }
+    });
+    console.log(restaurantObj);
+  }
 });
 
 renderUsers();
